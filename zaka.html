@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="ar">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>تسجيل دخول — FACEBOOK</title>
+
+  <style>
+    :root{
+      --primary: #1877F2;      /*الفيسبوك شعار ازرق*/
+      --muted: #65676b;
+      --bg: #ffffff;
+      --field-bg: #f0f2f5;
+      --cta-green: #42b72a;
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+    }
+
+    *{box-sizing: border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#eef2f8 0%, #fff 100%);}
+
+    .page {
+      min-height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
+    }
+
+    .panel {
+      width:100%;
+      max-width:980px;
+      display:flex;
+      gap:36px;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .left {
+      flex:1;
+      color:var(--primary);
+    }
+    .brand-title {
+      font-size:56px;
+      font-weight:800;
+      letter-spacing:-1px;
+      margin:0 0 8px 0;
+    }
+    .brand-sub {
+      color:var(--muted);
+      font-size:20px;
+      margin:0;
+    }
+
+    .card {
+      width:420px;
+      background:var(--bg);
+      padding:22px;
+      border-radius:8px;
+      box-shadow:0 8px 22px rgba(20,20,20,0.08);
+    }
+
+    .form-field {
+      width:100%;
+      padding:14px 16px;
+      margin-bottom:12px;
+      border-radius:8px;
+      border:1px solid rgba(0,0,0,0.06);
+      background:var(--field-bg);
+      font-size:15px;
+    }
+
+    .btn {
+      width:100%;
+      padding:13px 16px;
+      border-radius:8px;
+      border:none;
+      font-weight:700;
+      font-size:16px;
+      cursor:pointer;
+    }
+    .btn-primary { background:var(--primary); color:#fff; }
+    .btn-primary:disabled { opacity:0.6; cursor:default; }
+    .forgot {
+      display:block;
+      margin-top:10px;
+      text-align:center;
+      color:var(--primary);
+      font-weight:600;
+      text-decoration:none;
+    }
+
+    .divider {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin:18px 0;
+      color:var(--muted);
+      font-weight:600;
+      font-size:14px;
+    }
+    .divider::before, .divider::after {
+      content:"";
+      flex:1;
+      height:1px;
+      background:rgba(0,0,0,0.06);
+      border-radius:2px;
+    }
+
+    .btn-green { background:var(--cta-green); color:#fff; padding:12px; border-radius:8px; font-weight:700; }
+
+    .legal { text-align:center; margin-top:12px; color:var(--muted); font-size:13px; }
+
+    @media (max-width:880px){
+      .panel { flex-direction:column; gap:18px; max-width:520px; align-items:center; }
+      .left { text-align:center; }
+      .brand-title { font-size:40px; }
+      .card { width:100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="panel" role="main" aria-labelledby="page-title">
+      <div class="left" id="page-title">
+        <h1 class="brand-title">Facebook</h1>
+        <p class="brand-sub" /p>
+      </div>
+
+      <div class="card" aria-labelledby="login-heading">
+        <h2 id="login-heading" style="margin:0 0 12px 0; font-size:22px; color:#111;">تسجيل الدخول</h2>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <label for="email" class="sr-only" style="display:none">البريد الإلكتروني</label>
+          <input id="email" class="form-field" type="email" placeholder="رقم الهاتف أو البريد الإلكتروني" autocomplete="email" required />
+
+          <label for="password" class="sr-only" style="display:none">كلمة السر</label>
+          <input id="password" class="form-field" type="password" placeholder="كلمة السر" autocomplete="current-password" required minlength="6" />
+
+          <button id="loginBtn" class="btn btn-primary" type="submit">تسجيل الدخول</button>
+
+          <a href="#" class="forgot" onclick="forgotHandler(event)">هل نسيت كلمة السر؟</a>
+
+          <div class="divider" aria-hidden="true">أو</div>
+
+          <button id="signupBtn" type="button" class="btn-green btn" onclick="handleSignup()">إنشاء حساب جديد</button>
+
+          <p class="legal">عبّر عن موافقتك على شروط الاستخدام وسياسة الخصوصية عند إنشاء حساب.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ملاحظة: هذا السكربت لعرض كيفية الحصول على القيم فقط (تعليمياً).
+    // لا تُستخدم لجمع بيانات أفراد آخرين دون موافقتهم.
+    const loginForm = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const signupBtn = document.getElementById('signupBtn');
+
+    function setLoading(isLoading, btn) {
+      if (isLoading) {
+        btn.disabled = true;
+        btn.dataset.origText = btn.textContent;
+        btn.textContent = 'جارٍ...';
+      } else {
+        btn.disabled = false;
+        if (btn.dataset.origText) btn.textContent = btn.dataset.origText;
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) {
+        alert('الرجاء إدخال البريد الإلكتروني وكلمة السر.');
+        return;
+      }
+
+      setLoading(true, loginBtn);
+
+      try {
+        // هنا فقط مثال تعليمي: ستجد القيم في الكونسل.
+        console.log('محاولة تسجيل الدخول — Email:', email, 'Password:', password);
+
+        // TODO: ربط بصيغة آمنة للخلفية (مثلاً إرسال إلى خادمك عبر HTTPS مع مصادقة)
+        // لا تحفظ كلمات المرور كنص واضح على الخادم.
+        await new Promise(resolve => setTimeout(resolve, 800)); // محاكاة طلب
+
+        alert('محاكاة تسجيل دخول ناجح (تعليمي فقط).');
+      } catch (err) {
+        console.error(err);
+        alert('حدث خطأ أثناء تسجيل الدخول.');
+      } finally {
+        setLoading(false, loginBtn);
+      }
+    }
+
+    function handleSignup() {
+      // توجه المستخدم لصفحة إنشاء حساب أو قم بفتح مودال
+      alert('انتقال لصفحة إنشاء الحساب (تعليمي).');
+    }
+
+    function forgotHandler(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      if (!email) {
+        alert('الرجاء إدخال البريد الإلكتروني في الحقل لإرسال رابط الاسترجاع.');
+        return;
+      }
+      alert('محاكاة: تم إرسال رابط استرجاع كلمة السر إلى ' + email + ' (تعليمي).');
+    }
+  </script>
+</body>
+</html>
